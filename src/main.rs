@@ -28,6 +28,7 @@ enum Commands{
     List,
     Done{id: u64},
     Delete{id: u64},
+    Edit { id: u64, description: String },
 }
 fn load_tasks() ->Vec<Task> {
     let path = PathBuf::from(TASK_FILE);
@@ -99,6 +100,16 @@ fn main(){
                 save_tasks(&tasks);
                 println!("Task {} deleted.", id);
             }else {
+                eprintln!("Task {} not found.", id);
+                process::exit(1);
+            }
+        }
+        Commands::Edit { id, description } => {
+            if let Some(t) = tasks.iter_mut().find(|t| t.id == id) {
+                t.description = description;
+                save_tasks(&tasks);
+                println!("Task {} updated.", id);
+            } else {
                 eprintln!("Task {} not found.", id);
                 process::exit(1);
             }
